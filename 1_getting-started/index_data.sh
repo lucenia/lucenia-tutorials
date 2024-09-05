@@ -57,9 +57,9 @@ for CHUNK in "$TEMP_DIR"/chunk_*; do
         FILLED=$((PROGRESS * BAR_LENGTH / 100))
         UNFILLED=$((BAR_LENGTH - FILLED))
         PROGRESS_BAR=$(printf "%${FILLED}s" | tr ' ' '#')
-        PROGRESS_BAR+=$(printf "%${UNFILLED}s" | tr ' ' '-')
-        
-        printf "Progress: [%s] %3d%% (%d/%d chunks)\r" "$PROGRESS_BAR" "$PROGRESS" "$CHUNK_COUNT" "$TOTAL_CHUNKS"
+        PROGRESS_BAR=$(printf "%s%${UNFILLED}s" "$PROGRESS_BAR" | tr ' ' '-')
+ 
+        printf "\rProgress: [%s] %3d%% (%d/%d chunks)" "$PROGRESS_BAR" "$PROGRESS" "$CHUNK_COUNT" "$TOTAL_CHUNKS"
 
         curl -s -XPOST "$URL" \
              -u "admin:${ADMIN_PASSWORD}" \
@@ -77,5 +77,5 @@ done
 rm -rf "$TEMP_DIR"
 
 # Finish progress bar
-echo -e "\nProcessing completed. Check $LOGFILE for details."
+printf "\nProcessing completed. Check %s for details.\n" "$LOGFILE"
 
