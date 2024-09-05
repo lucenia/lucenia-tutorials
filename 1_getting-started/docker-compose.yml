@@ -18,12 +18,14 @@ services:
         soft: 65536 # maximum number of open files for the Lucenia user, set to at least 65536 on modern systems
         hard: 65536
     volumes:
-      - ./node/data:/usr/share/lucenia/data
+      - lucenia-data:/usr/share/lucenia/data
       - ./node/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
       - ./node/config/trial.crt:/usr/share/lucenia/config/trial.crt
     ports:
       - 9200:9200
     networks:
       - lucenia-net
+volumes:
+  lucenia-data:
 networks:
   lucenia-net:
