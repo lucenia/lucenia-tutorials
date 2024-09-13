@@ -2,3 +2,4 @@ scratch/
 .vscode
 venv/
 *.crt
+__pycache__/
