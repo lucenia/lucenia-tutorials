@@ -33,11 +33,18 @@ To run the `2_stac_catalog` project outside of Docker, follow these steps:
      pip install -r requirements.txt
      ```
 
-4. **Start the Application**:
-   - Run the application:
+4. **Source .env vars**:
+   - To put env vars into your environment go into the .env file and change ES_HOST to localhost, then run:
+
+    ```sh
+      source .env
+    ```
+
+5. **Start the Application**:
+   - From 2_stac-demo, run:
 
      ```sh
-     uvicorn app.main:app --reload
+     cd stac_fastapi/opensearch/stac_fastapi/opensearch && uvicorn app:app --reload
      ```
 
 ## Using Docker Compose
@@ -90,4 +97,3 @@ python3 data_loader.py --base-url http://localhost:8082 --username admin --passw
 - Ensure that you have Docker and Docker Compose installed on your machine.
 - Make sure to activate the virtual environment whenever you work on the `2_stac_catalog` project to ensure that the correct dependencies are used.
 
-For more detailed instructions and troubleshooting, refer to the documentation provided within each project directory.

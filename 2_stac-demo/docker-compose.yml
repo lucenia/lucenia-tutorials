@@ -4,7 +4,6 @@ services:
 
   app-lucenia:
     container_name: stac-fastapi-lucenia
-    image: stac-utils/stac-fastapi-lucenia
     restart: always
     build:
       context: .
