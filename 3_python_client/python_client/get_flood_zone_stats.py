@@ -62,9 +62,7 @@ def get_flood_zones():
     return flood_zones
 
 
-# Example usage
-if __name__ == "__main__":
-
+def flood_zone_categories_count():
     flood_zone_categories_count = {}
 
     flood_zones = get_flood_zones()
@@ -80,4 +78,9 @@ if __name__ == "__main__":
         flood_zone_categories_count.setdefault(flood_zone_rating, 0)
         flood_zone_categories_count[flood_zone_rating] += buildings_count
 
-    print(f"Flood zone categories count: {flood_zone_categories_count}")
+    return flood_zone_categories_count
+
+
+if __name__ == "__main__":
+
+    flood_zone_categories_count()
