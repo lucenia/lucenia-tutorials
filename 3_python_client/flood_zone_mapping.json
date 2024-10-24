@@ -1,0 +1,14 @@
+{
+  "mappings": {
+    "properties": {
+      "flood_zone_coordinates": {
+        "type": "geo_shape"
+      },
+      "flood_zone_rating": {
+        "type": "keyword"
+      }
+
+
+    }
+  }
+}
