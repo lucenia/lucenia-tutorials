@@ -38,6 +38,6 @@ def convert_geojson_to_bulk_json(geojson_file, bulk_json_file, index_name):
 if __name__ == "__main__":
     geojson_file = "./North_Carolina_Flood_Hazard_Area_Effective.geojson"
     bulk_json_file = "flood_zone_bulk.json"
-    index_name = "flood_plane"
+    index_name = "flood_plain"
 
     convert_geojson_to_bulk_json(geojson_file, bulk_json_file, index_name)

@@ -2,7 +2,7 @@ from opensearchpy import OpenSearch
 
 # Define the OpenSearch endpoint and indices
 OPENSEARCH_URL = "http://localhost:9200"
-FLOOD_PLANE_INDEX = "flood_plane"
+FLOOD_plain_INDEX = "flood_plain"
 BUILDINGS_INDEX = "buildings"
 
 # Initialize the OpenSearch client
@@ -52,7 +52,7 @@ def get_flood_zones():
 
     # Send request to get flood zones
     flood_zone_response = client.search(
-        index=FLOOD_PLANE_INDEX, body=flood_zone_query, size=1100
+        index=FLOOD_plain_INDEX, body=flood_zone_query, size=1100
     )
 
     print(f"Total flood zones: {flood_zone_response['hits']['total']['value']}")

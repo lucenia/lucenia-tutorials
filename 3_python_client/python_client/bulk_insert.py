@@ -13,8 +13,8 @@ client = OpenSearch(
     ssl_show_warn=False,
 )
 
-if not client.indices.exists(index="flood_plane"):
-    flood_plane_mappings = {
+if not client.indices.exists(index="flood_plain"):
+    flood_plain_mappings = {
         "mappings": {
             "properties": {
                 "flood_zone_coordinates": {"type": "geo_shape"},
@@ -22,7 +22,7 @@ if not client.indices.exists(index="flood_plane"):
             }
         }
     }
-    client.indices.create("flood_plane", body=flood_plane_mappings)
+    client.indices.create("flood_plain", body=flood_plain_mappings)
 
 if not client.indices.exists(index="buildings"):
     building_mappings = {
@@ -45,8 +45,8 @@ with open("./sample_data/NorthCarolinaBuildings_Bulk_filtered.json", "r") as f:
         bulk_buildings.append(data)
 bulk(client, bulk_buildings, raise_on_error=False)
 
-bulk_flood_planes = []
-if client.count(index="flood_plane")["count"] == 0:
+bulk_flood_plains = []
+if client.count(index="flood_plain")["count"] == 0:
     with open("./sample_data/flood_zone_bulk.json", "r") as f:
         for i, line in enumerate(f):
             line = json.loads(line)
@@ -55,7 +55,7 @@ if client.count(index="flood_plane")["count"] == 0:
             if i % 2 == 1:
 
                 data = {
-                    "_index": "flood_plane",
+                    "_index": "flood_plain",
                     "_id": i,
                     "_source": {
                         "flood_zone_coordinates": line["flood_zone_coordinates"],
@@ -63,5 +63,5 @@ if client.count(index="flood_plane")["count"] == 0:
                     },
                 }
 
-                bulk_flood_planes.append(data)
-bulk(client, bulk_flood_planes, raise_on_error=False)
+                bulk_flood_plains.append(data)
+bulk(client, bulk_flood_plains, raise_on_error=False)

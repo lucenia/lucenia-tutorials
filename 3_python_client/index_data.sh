@@ -29,7 +29,7 @@ LOGFILE="$LOG_DIR/bulk_post.log"
 mkdir -p "$TEMP_DIR"
 
 # URL for the curl POST request
-URL="http://localhost:9200/flood_plane/_bulk"
+URL="http://localhost:9200/flood_plain/_bulk"
 
 # Print notification to the user
 echo "Decompressing and chunking input file..."
