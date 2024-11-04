@@ -1,0 +1,4 @@
+cluster.name: "lucenia-cluster"
+network.host: 0.0.0.0
+plugins.license.certificate_filepath: config/trial.crt
+plugins.security.disabled: true
