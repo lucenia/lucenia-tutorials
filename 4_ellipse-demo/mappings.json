@@ -1,0 +1,174 @@
+{
+  "mappings": {
+    "properties": {
+      "tower_id": {
+        "type": "keyword"
+      },
+      "site_name": {
+        "type": "text"
+      },
+      "location": {
+        "type": "geo_point"
+      },
+      "coordinates": {
+        "properties": {
+          "latitude": {
+            "type": "float"
+          },
+          "longitude": {
+            "type": "float"
+          },
+          "elevation_meters": {
+            "type": "integer"
+          }
+        }
+      },
+      "antenna": {
+        "properties": {
+          "height_meters": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "azimuth_degrees": {
+            "type": "integer"
+          },
+          "beamwidth": {
+            "properties": {
+              "horizontal_degrees": {
+                "type": "integer"
+              },
+              "vertical_degrees": {
+                "type": "integer"
+              }
+            }
+          },
+          "tilt_degrees": {
+            "type": "float"
+          },
+          "frequency_band_mhz": {
+            "type": "integer"
+          },
+          "transmit_power_dbm": {
+            "type": "integer"
+          },
+          "technology": {
+            "type": "keyword"
+          }
+        }
+      },
+      "coverage": {
+        "properties": {
+          "coverage_radius_km": {
+            "type": "float"
+          },
+          "propagation_model": {
+            "type": "keyword"
+          },
+          "signal_strength_dbm": {
+            "type": "integer"
+          },
+          "signal_quality_sinr_db": {
+            "type": "integer"
+          },
+          "interference_dbm": {
+            "type": "integer"
+          }
+        }
+      },
+      "operational_info": {
+        "properties": {
+          "capacity_users": {
+            "type": "integer"
+          },
+          "backhaul_type": {
+            "type": "keyword"
+          },
+          "traffic_load": {
+            "properties": {
+              "data_usage_gb": {
+                "type": "integer"
+              },
+              "call_volume_hours": {
+                "type": "integer"
+              }
+            }
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "uptime_percentage": {
+            "type": "float"
+          }
+        }
+      },
+      "regulatory": {
+        "properties": {
+          "license_id": {
+            "type": "keyword"
+          },
+          "owner": {
+            "type": "keyword"
+          },
+          "registration_number": {
+            "type": "keyword"
+          },
+          "compliance_status": {
+            "type": "keyword"
+          }
+        }
+      },
+      "environmental_safety": {
+        "properties": {
+          "rf_exposure_limit_w_m2": {
+            "type": "float"
+          },
+          "weatherproofing": {
+            "type": "keyword"
+          },
+          "wind_load_rating_kph": {
+            "type": "integer"
+          }
+        }
+      },
+      "additional_identifiers": {
+        "properties": {
+          "cell_id": {
+            "type": "keyword"
+          },
+          "sector_id": {
+            "type": "keyword"
+          }
+        }
+      },
+      "maintenance": {
+        "properties": {
+          "installation_date": {
+            "type": "date",
+            "format": "yyyy-MM-dd"
+          },
+          "maintenance_records": {
+            "type": "nested",
+            "properties": {
+              "date": {
+                "type": "date",
+                "format": "yyyy-MM-dd"
+              },
+              "details": {
+                "type": "text"
+              }
+            }
+          },
+          "operational_status": {
+            "type": "keyword"
+          }
+        }
+      },
+      "ellipse": {
+        "type": "geo_shape"
+      }
+    }
+  }
+}
+
