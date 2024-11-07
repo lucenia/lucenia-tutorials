@@ -1,7 +1,7 @@
 version: '3'
 services:
   lucenia-node:
-    image: lucenia/lucenia:0.2.0
+    image: lucenia/lucenia:0.2.1
     container_name: lucenia-ellipse-demo
     environment:
       - cluster.name=lucenia-ellipse-cluster
