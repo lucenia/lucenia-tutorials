@@ -30,7 +30,7 @@ Spin up the Lucenia node with Docker Compose:
 docker compose up
 ```
 
-This command pulls the `0.1.0` image and launches a production-ready node with a 512MB heap. Modify the `docker-compose.yml` file as needed.
+This command pulls the `0.2.1` image and launches a production-ready node with a 512MB heap. Modify the `docker-compose.yml` file as needed.
 
 ### Verify the Node
 

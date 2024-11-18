@@ -37,7 +37,7 @@ services:
       lucenia-node:
         condition: service_healthy
   lucenia-node:
-    image: lucenia/lucenia:0.1.0
+    image: lucenia/lucenia:0.2.1
     container_name: lucenia-node
     environment:
       - cluster.name=lucenia-cluster
