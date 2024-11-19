@@ -1,0 +1,184 @@
+version: '3'
+
+services:
+  lucenia-node1:
+    image: lucenia/lucenia:0.2.1
+    container_name: lucenia-node1
+    environment:
+      - cluster.name=lucenia-cluster
+      - http.max_content_length=200mb
+      - node.name=lucenia-node1
+      - node.roles=data,cluster_manager
+      - discovery.seed_hosts=lucenia-node1,lucenia-node2,lucenia-node3
+      - cluster.initial_cluster_manager_nodes=lucenia-node1,lucenia-node2,lucenia-node3
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms2g -Xmx2g"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - lucenia-data1:/usr/share/lucenia/data
+      - ./node1/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
+      - ./node1/config/trial.crt:/usr/share/lucenia/config/trial.crt
+    ports:
+      - 9201:9200
+    networks:
+      - lucenia-net
+
+  lucenia-node2:
+    image: lucenia/lucenia:0.2.1
+    container_name: lucenia-node2
+    environment:
+      - cluster.name=lucenia-cluster
+      - http.max_content_length=200mb
+      - node.name=lucenia-node2
+      - node.roles=data,cluster_manager
+      - discovery.seed_hosts=lucenia-node1,lucenia-node2,lucenia-node3
+      - cluster.initial_cluster_manager_nodes=lucenia-node1,lucenia-node2,lucenia-node3
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms2g -Xmx2g"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - lucenia-data2:/usr/share/lucenia/data
+      - ./node2/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
+      - ./node2/config/trial.crt:/usr/share/lucenia/config/trial.crt
+    ports:
+      - 9202:9200
+    networks:
+      - lucenia-net
+
+  lucenia-node3:
+    image: lucenia/lucenia:0.2.1
+    container_name: lucenia-node3
+    environment:
+      - cluster.name=lucenia-cluster
+      - node.name=lucenia-node3
+      - http.max_content_length=200mb
+      - node.roles=data,cluster_manager
+      - discovery.seed_hosts=lucenia-node1,lucenia-node2,lucenia-node3
+      - cluster.initial_cluster_manager_nodes=lucenia-node1,lucenia-node2,lucenia-node3
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms2g -Xmx2g"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - lucenia-data3:/usr/share/lucenia/data
+      - ./node3/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
+      - ./node3/config/trial.crt:/usr/share/lucenia/config/trial.crt
+    ports:
+      - 9203:9200
+    networks:
+      - lucenia-net
+
+  lucenia-ingest1:
+    image: lucenia/lucenia:0.2.1
+    container_name: lucenia-ingest1
+    environment:
+      - cluster.name=lucenia-cluster
+      - node.name=lucenia-ingest1
+      - http.max_content_length=200mb
+      - node.roles=ingest
+      - discovery.seed_hosts=lucenia-node1,lucenia-node2,lucenia-node3
+      - cluster.initial_cluster_manager_nodes=lucenia-node1,lucenia-node2,lucenia-node3
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms2g -Xmx2g"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - lucenia-data4:/usr/share/lucenia/data
+      - ./ingest1/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
+      - ./ingest1/config/trial.crt:/usr/share/lucenia/config/trial.crt
+    ports:
+      - 9204:9200
+    networks:
+      - lucenia-net
+#    command: >
+#      bash -c "if [ ! -d /usr/share/lucenia/plugins/ingest-attachment ]; then
+#        lucenia-plugin install --batch http://artifacts.lucenia.io/ingest-attachment/ingest-attachment-0.2.1.zip; 
+#      fi &&
+#      lucenia"
+
+  lucenia-ingest2:
+    image: lucenia/lucenia:0.2.1
+    container_name: lucenia-ingest2
+    environment:
+      - cluster.name=lucenia-cluster
+      - http.max_content_length=200mb
+      - node.name=lucenia-ingest2
+      - node.roles=ingest
+      - discovery.seed_hosts=lucenia-node1,lucenia-node2,lucenia-node3
+      - cluster.initial_cluster_manager_nodes=lucenia-node1,lucenia-node2,lucenia-node3
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms2g -Xmx2g"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - lucenia-data5:/usr/share/lucenia/data
+      - ./ingest2/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
+      - ./ingest2/config/trial.crt:/usr/share/lucenia/config/trial.crt
+    ports:
+      - 9205:9200
+    networks:
+      - lucenia-net
+#    command: >
+#      bash -c "if [ ! -d /usr/share/lucenia/plugins/ingest-attachment ]; then
+#        lucenia-plugin install --batch http://artifacts.lucenia.io/ingest-attachment/ingest-attachment-0.2.1.zip;
+#      fi &&
+#      lucenia"
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9100:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - lucenia-net
+
+volumes:
+  lucenia-data1:
+  lucenia-data2:
+  lucenia-data3:
+  lucenia-data4:
+  lucenia-data5:
+  minio-data:
+
+networks:
+  lucenia-net:
+    driver: bridge

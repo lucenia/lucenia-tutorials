@@ -1,0 +1,73 @@
+{
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "html_strip_filter": {
+          "type": "html_strip"
+        },
+        "newline_remover": {
+          "type": "pattern_replace",
+          "pattern": "[\\n\\r]+",
+          "replacement": " "
+        }
+      },
+      "analyzer": {
+        "html_cleaner": {
+          "type": "custom",
+          "char_filter": ["html_strip_filter", "newline_remover"],
+          "tokenizer": "standard",
+          "filter": ["lowercase", "stop"]
+        }
+      }
+    }
+  },
+  "mappings" : {
+    "properties" : {
+      "document" : {
+        "properties" : {
+          "content" : {
+            "type" : "text",
+	    "fielddata": true,
+	    "analyzer": "html_cleaner",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 32765 
+              }
+            }
+          },
+          "content_length" : {
+            "type" : "long"
+          },
+          "content_type" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "language" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          }
+        }
+      },
+      "filename" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      }
+    }
+  }
+}
