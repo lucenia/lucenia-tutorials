@@ -1,0 +1,87 @@
+version: '3'
+services:
+  search-node1: # This is also the hostname of the container within the Docker network (i.e. https://search-node1/)
+    image: lucenia/lucenia:0.2.1
+    container_name: search-node1
+    environment:
+      - cluster.name=search-cluster # Name the cluster
+      - node.name=search-node1 # Name the node that will run in this container
+      - discovery.seed_hosts=search-node1,search-node2,search-node3 # Nodes to look for when discovering the cluster
+      - cluster.initial_cluster_manager_nodes=search-node1,search-node2,search-node3 # Nodes eligible to serve as cluster manager
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=${LUCENIA_INITIAL_ADMIN_PASSWORD}
+      - plugins.license.certificate_filepath=config/trial.crt
+      - path.data=/usr/share/opensearch/data
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files - set to at least 65536
+        hard: 65536
+    volumes:
+      - search-data1:/usr/share/opensearch/data # Creates volume called search-data1 and mounts it to the container
+      - ./trial.crt:/usr/share/lucenia/config/trial.crt
+    ports:
+      - 9200:9200 # REST API
+    networks:
+      - search-net # All of the containers will join the same Docker bridge network
+  search-node2:
+    image: lucenia/lucenia:0.2.1
+    container_name: search-node2
+    environment:
+      - cluster.name=search-cluster
+      - node.name=search-node2
+      - discovery.seed_hosts=search-node1,search-node2,search-node3
+      - cluster.initial_cluster_manager_nodes=search-node1,search-node2,search-node3
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=${LUCENIA_INITIAL_ADMIN_PASSWORD}
+      - plugins.license.certificate_filepath=config/trial.crt
+      - path.data=/usr/share/opensearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - search-data2:/usr/share/opensearch/data
+      - ./trial.crt:/usr/share/lucenia/config/trial.crt
+    networks:
+      - search-net
+  search-node3:
+    image: lucenia/lucenia:0.2.1
+    container_name: search-node3
+    environment:
+      - cluster.name=search-cluster
+      - node.name=search-node3
+      - discovery.seed_hosts=search-node1,search-node2,search-node3
+      - cluster.initial_cluster_manager_nodes=search-node1,search-node2,search-node3
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=${LUCENIA_INITIAL_ADMIN_PASSWORD}
+      - plugins.license.certificate_filepath=config/trial.crt
+      - path.data=/usr/share/opensearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - search-data3:/usr/share/opensearch/data
+      - ./trial.crt:/usr/share/lucenia/config/trial.crt
+    networks:
+      - search-net
+
+volumes:
+  search-data1:
+  search-data2:
+  search-data3:
+
+networks:
+  search-net:
