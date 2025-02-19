@@ -74,7 +74,7 @@ public class OpenSearchRestClientTransport {
 
             //Search for the document
             client.search(s -> s.index(index), IndexData.class).hits().hits().forEach(hit -> {
-                hit.source().toString());
+                System.out.println(hit.source().toString());
             });
 
             //Delete the document
