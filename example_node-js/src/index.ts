@@ -1,4 +1,4 @@
-import opensearch from '@opensearch-project/opensearch';
+import opensearch from '@opensearch-project/opensearch/.';
 
 const client = new opensearch.Client({
   node: 'https://localhost:9200',
