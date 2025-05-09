@@ -1,0 +1,12 @@
+{
+  "mappings": {
+    "properties": {
+      "building": {
+        "type": "geo_shape"
+      }
+
+
+    },
+    "dynamic": "strict"
+  }
+}
