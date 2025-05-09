@@ -1,6 +1,6 @@
+import csv
 from opensearchpy import OpenSearch
 from opensearchpy.helpers import bulk
-import json
 
 # OpenSearch client configuration
 client = OpenSearch(
@@ -13,55 +13,54 @@ client = OpenSearch(
     ssl_show_warn=False,
 )
 
-if not client.indices.exists(index="flood_plain"):
-    flood_plain_mappings = {
+# Create index for fire detections
+if not client.indices.exists(index="fire_detections"):
+    fire_mapping = {
         "mappings": {
             "properties": {
-                "flood_zone_coordinates": {"type": "geo_shape"},
-                "flood_zone_rating": {"type": "keyword"},
+                "location": {"type": "geo_point"},
+                "bright_ti4": {"type": "float"},
+                "scan": {"type": "float"},
+                "track": {"type": "float"},
+                "acq_date": {"type": "date", "format": "yyyy-MM-dd"},
+                "acq_time": {"type": "keyword"},
+                "satellite": {"type": "keyword"},
+                "confidence": {"type": "keyword"},
+                "version": {"type": "keyword"},
+                "bright_ti5": {"type": "float"},
+                "frp": {"type": "float"},
+                "daynight": {"type": "keyword"},
             }
         }
     }
-    client.indices.create("flood_plain", body=flood_plain_mappings)
+    client.indices.create(index="fire_detections", body=fire_mapping)
 
-if not client.indices.exists(index="buildings"):
-    building_mappings = {
-        "mappings": {"properties": {"building": {"type": "geo_shape"}}}
-    }
-    client.indices.create("buildings", body=building_mappings)
-
-bulk_buildings = []
-with open("./sample_data/NorthCarolinaBuildings_Bulk_filtered.json", "r") as f:
-    for i, line in enumerate(f):
-        line = json.loads(line)
-
-        data = {
-            "_index": "buildings",
+# Read and bulk index CSV data
+bulk_fire_data = []
+with open("./sample_data/SUOMI_VIIRS_C2_USA_contiguous_and_Hawaii_7d.csv", newline="") as csvfile:
+    reader = csv.DictReader(csvfile)
+    for i, row in enumerate(reader):
+        doc = {
+            "_index": "fire_detections",
             "_id": i,
             "_source": {
-                "building": line["building"],
+                "location": {
+                    "lat": float(row["latitude"]),
+                    "lon": float(row["longitude"]),
+                },
+                "bright_ti4": float(row["bright_ti4"]),
+                "scan": float(row["scan"]),
+                "track": float(row["track"]),
+                "acq_date": row["acq_date"],
+                "acq_time": row["acq_time"],
+                "satellite": row["satellite"],
+                "confidence": row["confidence"],
+                "version": row["version"],
+                "bright_ti5": float(row["bright_ti5"]),
+                "frp": float(row["frp"]),
+                "daynight": row["daynight"],
             },
         }
-        bulk_buildings.append(data)
-bulk(client, bulk_buildings, raise_on_error=False)
+        bulk_fire_data.append(doc)
 
-bulk_flood_plains = []
-if client.count(index="flood_plain")["count"] == 0:
-    with open("./sample_data/flood_zone_bulk.json", "r") as f:
-        for i, line in enumerate(f):
-            line = json.loads(line)
-            # update the sample data
-
-            if i % 2 == 1:
-
-                data = {
-                    "_index": "flood_plain",
-                    "_id": i,
-                    "_source": {
-                        "flood_zone_coordinates": line["flood_zone_coordinates"],
-                        "flood_zone_rating": line["flood_zone_rating"],
-                    },
-                }
-
-                bulk_flood_plains.append(data)
-bulk(client, bulk_flood_plains, raise_on_error=False)
+bulk(client, bulk_fire_data, raise_on_error=False)

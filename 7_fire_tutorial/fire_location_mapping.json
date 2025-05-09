@@ -1,0 +1,18 @@
+{
+  "mappings": {
+      "properties": {
+          "location": {"type": "geo_point"},
+          "bright_ti4": {"type": "float"},
+          "scan": {"type": "float"},
+          "track": {"type": "float"},
+          "acq_date": {"type": "date", "format": "yyyy-MM-dd"},
+          "acq_time": {"type": "keyword"},
+          "satellite": {"type": "keyword"},
+          "confidence": {"type": "keyword"},
+          "version": {"type": "keyword"},
+          "bright_ti5": {"type": "float"},
+          "frp": {"type": "float"},
+          "daynight": {"type": "keyword"}
+      }
+  }
+}
