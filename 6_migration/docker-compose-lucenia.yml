@@ -1,7 +1,7 @@
 version: '3'
 services:
   search-node1: # This is also the hostname of the container within the Docker network (i.e. https://search-node1/)
-    image: lucenia/lucenia:0.4.0
+    image: lucenia/lucenia:0.5.1
     container_name: search-node1
     environment:
       - cluster.name=search-cluster # Name the cluster

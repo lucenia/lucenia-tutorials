@@ -1,7 +1,7 @@
 version: '3'
 services:
   lucenia-node1:
-    image: lucenia/lucenia:0.5.0
+    image: lucenia/lucenia:0.5.1
     container_name: lucenia-node1
     environment:
       - cluster.name=lucenia-cluster
