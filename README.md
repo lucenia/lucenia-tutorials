@@ -99,6 +99,16 @@ docker compose up
 
 [Migration guide →](6_migration/README.md)
 
+### 7. Logging with FluentBit
+
+**Purpose**: Set up logging with FluentBit and Lucenia, visualize with OpenSearch Dashboards
+
+- Log aggregation pipeline
+- Metadata enrichment
+- Real-time log visualization
+
+[Logging tutorial →](7_logging/README.md)
+
 ## Example Applications
 
 Complete example applications demonstrating real-world implementations:
