@@ -1,0 +1,58 @@
+name: lucenia
+services:
+  lucenia-node:
+    image: lucenia/lucenia:0.8.0
+    container_name: lucenia-node
+    environment:
+      - cluster.name=lucenia-cluster
+      - node.name=lucenia-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m"
+      - network.host=0.0.0.0
+      - plugins.license.certificate_filepath=config/license.crt
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123_
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the lucenia user - set to at least 65536
+        hard: 65536
+    volumes:
+      - ./lucenia-data:/usr/share/lucenia/data
+      - ./trial.crt:/usr/share/lucenia/config/license.crt
+    ports:
+      - 9200:9200
+    networks:
+      - lucenia-net
+  grafana:
+    image: grafana/grafana:12.2
+    container_name: grafana
+    ports:
+      - "8082:3000"
+    expose:
+      - "8082"
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-opensearch-datasource
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    volumes:
+      - ./grafana-datasource.yaml:/etc/grafana/provisioning/datasources/opensearch.yml
+    networks:
+      - lucenia-net
+  fluent-bit:
+    image: fluent/fluent-bit:4.0.7
+    container_name: fluent-bit
+    volumes:
+      - ./fluent-bit-advanced.yaml:/fluent-bit/etc/fluent-bit.yaml
+      - ./scripts:/fluent-bit/scripts
+      - /var/log:/var/log
+    command: /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.yaml
+    networks:
+      - lucenia-net
+
+volumes:
+  lucenia-data:
+
+networks:
+  lucenia-net:
