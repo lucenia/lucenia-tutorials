@@ -43,8 +43,6 @@ services:
   fluent-bit:
     image: fluent/fluent-bit:4.0.7
     container_name: fluent-bit
-    environment:
-      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123_
     volumes:
       - ./fluent-bit-advanced.yaml:/fluent-bit/etc/fluent-bit.yaml
       - ./scripts:/fluent-bit/scripts
