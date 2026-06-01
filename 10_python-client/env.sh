@@ -1,0 +1,1 @@
+export LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!

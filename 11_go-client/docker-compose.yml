@@ -1,0 +1,36 @@
+version: '3'
+services:
+  lucenia-node:
+    image: lucenia/lucenia:0.4.0
+    container_name: lucenia-node
+    environment:
+      - cluster.name=lucenia-cluster
+      - node.name=lucenia-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m"
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - lucenia-data:/usr/share/lucenia/data
+      - ./node/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
+      - ./node/config/trial.crt:/usr/share/lucenia/config/trial.crt
+    ports:
+      - 9200:9200
+    networks:
+      - lucenia-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf https://localhost:9200/_cluster/health -u admin:MyStrongPassword123! --insecure || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+volumes:
+  lucenia-data:
+networks:
+  lucenia-net:
