@@ -1,7 +1,6 @@
-version: '3'
 services:
   lucenia-node:
-    image: lucenia/lucenia:0.4.0
+    image: lucenia/lucenia:0.11.0
     container_name: lucenia-node
     environment:
       - cluster.name=lucenia-cluster
@@ -10,6 +9,7 @@ services:
       - bootstrap.memory_lock=true
       - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m"
       - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+      - plugins.license.certificate_filepath=config/trial.crt
     ulimits:
       memlock:
         soft: -1
@@ -19,7 +19,6 @@ services:
         hard: 65536
     volumes:
       - lucenia-data:/usr/share/lucenia/data
-      - ./node/config/lucenia.yml:/usr/share/lucenia/config/lucenia.yml
       - ./node/config/trial.crt:/usr/share/lucenia/config/trial.crt
     ports:
       - 9200:9200

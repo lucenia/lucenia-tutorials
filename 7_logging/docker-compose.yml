@@ -1,7 +1,7 @@
 name: lucenia
 services:
   lucenia-node:
-    image: lucenia/lucenia:0.6.1
+    image: lucenia/lucenia:0.11.0
     container_name: lucenia-node
     environment:
       - cluster.name=lucenia-cluster # Name the cluster
