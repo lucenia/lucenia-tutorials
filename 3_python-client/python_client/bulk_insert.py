@@ -1,9 +1,9 @@
-from opensearchpy import OpenSearch
-from opensearchpy.helpers import bulk
+from lucenia import Lucenia
+from lucenia.helpers import bulk
 import json
 
-# OpenSearch client configuration
-client = OpenSearch(
+# Lucenia client configuration
+client = Lucenia(
     hosts=[{"host": "localhost", "port": 9200}],
     http_compress=True,
     http_auth=("admin", "MyStrongPassword123!"),

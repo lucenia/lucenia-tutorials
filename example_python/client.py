@@ -1,6 +1,6 @@
-from opensearchpy import OpenSearch
+from lucenia import Lucenia
 
-client = OpenSearch(
+client = Lucenia(
    hosts=[{"host": "localhost", "port": 9200}],
    http_compress=True,
    http_auth=("admin", "MyStrongPassword123!"),

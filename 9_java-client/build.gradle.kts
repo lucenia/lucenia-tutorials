@@ -12,31 +12,10 @@ java {
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        url = uri("https://nexus.infra.lucenia.dev/repository/maven-releases")
-        credentials {
-            username = "reader"
-            password = ""
-        }
-        mavenContent {
-            releasesOnly()
-        }
-    }
-    maven {
-        url = uri("https://nexus.infra.lucenia.dev/repository/maven-snapshots")
-        credentials {
-            username = "reader"
-            password = ""
-        }
-        mavenContent {
-            snapshotsOnly()
-        }
-    }
     mavenCentral()
 }
 
-val luceniaJavaVersion = "0.10.0-SNAPSHOT"
+val luceniaJavaVersion = "v0.11.0"
 
 dependencies {
     implementation("io.lucenia.client:lucenia-java:$luceniaJavaVersion")
