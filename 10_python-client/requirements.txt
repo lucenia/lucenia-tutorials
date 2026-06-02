@@ -1,1 +1,1 @@
-lucenia-py>=0.10.0
+lucenia-py>=0.11.1

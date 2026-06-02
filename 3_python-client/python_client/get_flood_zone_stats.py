@@ -1,12 +1,12 @@
-from opensearchpy import OpenSearch
+from lucenia import Lucenia
 
-# Define the OpenSearch endpoint and indices
-OPENSEARCH_URL = "http://localhost:9200"
+# Define the Lucenia endpoint and indices
+LUCENIA_URL = "http://localhost:9200"
 FLOOD_plain_INDEX = "flood_plain"
 BUILDINGS_INDEX = "buildings"
 
-# Initialize the OpenSearch client
-client = OpenSearch(
+# Initialize the Lucenia client
+client = Lucenia(
     hosts=[{"host": "localhost", "port": 9200}],
     http_auth=("user", "password"),  # Replace with your credentials
     use_ssl=False,
