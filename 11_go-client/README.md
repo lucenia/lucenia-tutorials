@@ -1,6 +1,6 @@
 # Go Client Tutorial for Lucenia
 
-This tutorial demonstrates how to use the [lucenia-go](https://github.com/lucenia/go-client) client library to interact with Lucenia. It covers connecting to a cluster, creating an index, indexing documents (single and bulk), searching, and cleanup.
+This tutorial demonstrates how to use the lucenia-go client library to interact with Lucenia. It covers connecting to a cluster, creating an index, indexing documents (single and bulk), searching, and cleanup.
 
 ## Prerequisites
 
@@ -71,5 +71,4 @@ docker compose down -v
 
 ## Learn More
 
-- [lucenia-go User Guide](https://github.com/lucenia/go-client/blob/main/USER_GUIDE.md)
 - [Lucenia Documentation](https://docs.lucenia.io/)

@@ -1,6 +1,6 @@
 # Python Client Tutorial for Lucenia
 
-This tutorial demonstrates how to use the [lucenia-py](https://github.com/lucenia/python-client) client library to interact with Lucenia. It covers connecting to a cluster, creating an index, indexing documents (single and bulk), searching, and cleanup.
+This tutorial demonstrates how to use the lucenia-py client library to interact with Lucenia. It covers connecting to a cluster, creating an index, indexing documents (single and bulk), searching, and cleanup.
 
 ## Prerequisites
 
@@ -83,5 +83,4 @@ docker compose down -v
 
 ## Learn More
 
-- [lucenia-py User Guide](https://github.com/lucenia/python-client/blob/main/USER_GUIDE.md)
 - [Lucenia Documentation](https://docs.lucenia.io/)

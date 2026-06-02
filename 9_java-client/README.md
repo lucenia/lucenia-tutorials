@@ -1,6 +1,6 @@
 # Java Client Tutorial for Lucenia
 
-This tutorial demonstrates how to use the [lucenia-java](https://github.com/lucenia/java-client) client library to interact with Lucenia. It covers connecting to a cluster, creating an index, indexing documents (single and bulk), searching, and cleanup.
+This tutorial demonstrates how to use the lucenia-java client library to interact with Lucenia. It covers connecting to a cluster, creating an index, indexing documents (single and bulk), searching, and cleanup.
 
 ## Prerequisites
 
@@ -70,5 +70,4 @@ docker compose down -v
 
 ## Learn More
 
-- [lucenia-java User Guide](https://github.com/lucenia/java-client/blob/main/USER_GUIDE.md)
 - [Lucenia Documentation](https://docs.lucenia.io/)
