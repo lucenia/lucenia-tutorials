@@ -109,6 +109,16 @@ docker compose up
 
 [Logging tutorial →](7_logging/README.md)
 
+### 8. RBAC & ABAC Access Control
+
+**Purpose**: Limit who can see which data using the Security plugin
+
+- Role-Based Access Control (RBAC) with roles and users
+- Attribute-Based Access Control (ABAC) with per-user attributes
+- Document-Level Security (DLS) and Field-Level Security (FLS)
+
+[Access control tutorial →](12_rbac-abac/README.md)
+
 ## Example Applications
 
 Complete example applications demonstrating real-world implementations:
