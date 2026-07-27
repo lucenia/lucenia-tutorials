@@ -119,6 +119,16 @@ docker compose up
 
 [Access control tutorial →](12_rbac-abac/README.md)
 
+### 9. Parquet Index-Free Search
+
+**Purpose**: Query Parquet files in place, without ingesting or copying them
+
+- Mount a `.parquet` file as a read-only index (`PUT /_plugins/parquet/<index>`)
+- Understand inferred schema, the supported query surface, and its limitations
+- Promote a mount to a full index with `_reindex` to unlock sorting & aggregations
+
+[Index-free search tutorial →](13_parquet/README.md)
+
 ## Example Applications
 
 Complete example applications demonstrating real-world implementations:
