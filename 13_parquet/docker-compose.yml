@@ -1,0 +1,38 @@
+name: lucenia-parquet
+services:
+  lucenia-node:
+    image: lucenia/lucenia:0.12.0
+    container_name: lucenia-node
+    environment:
+      - cluster.name=lucenia-cluster
+      - node.name=lucenia-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - network.host=0.0.0.0
+      - plugins.license.certificate_filepath=config/trial.crt
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the Lucenia user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - lucenia-data:/usr/share/lucenia/data
+      - ./node/config/trial.crt:/usr/share/lucenia/config/trial.crt
+      # Mount the sample Parquet directory into the node's config dir so it can
+      # be referenced with the relative path "data/cars.parquet". Relative paths
+      # resolve against the node config directory and need no allowlist.
+      - ./node/config/data:/usr/share/lucenia/config/data
+    ports:
+      - 9200:9200
+    networks:
+      - lucenia-net
+
+volumes:
+  lucenia-data:
+
+networks:
+  lucenia-net:
