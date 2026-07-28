@@ -1,0 +1,87 @@
+service:
+  flush:       1
+  log_level:   info
+  http_server: on
+
+pipeline:
+  inputs:
+    - name: tail
+      tag: syslog
+      path: /var/log/syslog
+      mem_buf_limit: 5MB
+      skip_long_lines: on
+      skip_empty_lines: on
+      refresh_interval: 10
+
+    - name: tail
+      tag: app.logs
+      path: /var/log/*.log
+      mem_buf_limit: 5MB
+      skip_long_lines: on
+      skip_empty_lines: on
+      refresh_interval: 10
+
+    - name: cpu
+      tag: metrics.cpu
+      interval_sec: 2
+
+    - name: mem
+      tag: metrics.mem
+      interval_sec: 2
+
+    - name: disk
+      tag: metrics.disk
+      interval_sec: 5
+
+  filters:
+    - name: lua
+      match: metrics.cpu
+      script: /fluent-bit/scripts/cpu_avg.lua
+      call: compute_cpu_avg
+
+  outputs:
+
+    # SYSLOGS
+    - name: opensearch
+      match: syslog
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-syslog
+      generate_id: on
+      suppress_type_name: on
+      retry_limit: 5
+      workers: 1
+
+    # GENERIC APPLICATION LOGS
+    - name: opensearch
+      match: app.logs
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-app-logs
+      generate_id: on
+      suppress_type_name: on
+      retry_limit: 5
+      workers: 1
+
+    # METRICS
+    - name: opensearch
+      match: metrics.*
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-system-metrics
+      generate_id: on
+      suppress_type_name: on
+      retry_limit: 5
+      workers: 1

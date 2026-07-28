@@ -1,0 +1,241 @@
+service:
+  flush:       1
+  log_level:   info
+  http_server: on
+
+parsers:
+  - name: syslog_rfc5424
+    format: regex
+    regex: '^<(?<pri>[0-9]{1,3})>(?<version>[0-9]{1,2}) (?<timestamp>[^ ]+) (?<host>[^ ]+) (?<app_name>[^ ]+) (?<proc_id>[^ ]+) (?<msg_id>[^ ]+) (?<structured_data>(\[[^\]]*\] ?)*) (?<message>.*)$'
+
+  # Syslog RFC3164 (classic BSD format) – year inferred from system time
+  - name: syslog_rfc3164
+    format: regex
+    regex: '^(?<timestamp>(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+[ \d]\d \d{2}:\d{2}:\d{2}) (?<host>\S+) (?<program>[A-Za-z0-9._-]+)(?:\[(?<pid>\d+)\])?: (?<message>.*)$'
+
+  # kernel logs
+  - name: kernel
+    format: regex
+    regex: '^(?<timestamp>(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+[ \d]\d \d{2}:\d{2}:\d{2}) (?<host>\S+) kernel:\s*\[?(?<uptime>[\d.]+)\]?:?\s*(?<message>.*)$'
+
+  # Nginx / Apache Combined Log Format (+ some extras)
+  - name: web_combined
+    format: regex
+    regex: '^(?<remote_ip>\S+) \S+ (?<user>\S+) \[(?<timestamp>[^\]]+)\] "(?<method>\S+) (?<path>[^ ]+) (?<protocol>[^"]+)" (?<status>\d{3}) (?<bytes>\S+) "(?<referrer>[^"]*)" "(?<agent>[^"]*)"(?: "(?<forwarded_for>[^"]*)")?$'
+
+  # SSH, sudo, PAM, su – most auth-related services
+  - name: auth_basic
+    format: regex
+    regex: '^(?<timestamp>(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+[ \d]\d \d{2}:\d{2}:\d{2}) (?<host>\S+) (?<program>\S+?)(?:\[?(?<pid>\d+)\]?)?: (?<message>.*)$'
+
+  # PostgreSQL log_line_prefix common format
+  - name: postgresql
+    format: regex
+    regex: '^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [A-Z]+) \[(?<pid>\d+)\] (?<user>\w*)@(?<database>\w*) (?<level>[A-Z]+):  (?<message>.*)$'
+
+  # MySQL / MariaDB general query log & error log
+  - name: mysql
+    format: regex
+    regex: '^(?<timestamp>\d{6}\s+\d{1,2}:\d{2}:\d{2})\s+(?<pid>\d+)\s+\[(?<level>\w+)\]\s+(?<message>.*)$'
+
+  # Standard Python logging (via logging module)
+  - name: python_log
+    format: regex
+    regex: '^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) \[(?<level>[A-Z]+)\] (?<logger>[^\s]+) - (?<message>.*)$'
+
+  # Generic structured application log (ISO-like timestamp + level)
+  - name: app_generic
+    format: regex
+    regex: '^(?<timestamp>\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:[.,]\d{1,9})?(?:[+-]\d{4}|Z)?)\s+(?<level>[A-Z]+)\s+(?<message>.*)$'
+
+  # Pure JSON logs (most common fallback)
+  - name: json
+    format: json
+
+pipeline:
+  inputs:
+    - name: tail
+      tag: syslog
+      path: /var/log/syslog
+      mem_buf_limit: 5MB
+      skip_long_lines: on
+      skip_empty_lines: on
+      refresh_interval: 10
+
+    - name: tail
+      tag: app.logs
+      path: /var/log/*.log
+      mem_buf_limit: 5MB
+      skip_long_lines: on
+      skip_empty_lines: on
+      refresh_interval: 10
+
+    - name: cpu
+      tag: metrics.cpu
+      interval_sec: 2
+
+    - name: mem
+      tag: metrics.mem
+      interval_sec: 2
+
+    - name: disk
+      tag: metrics.disk
+      interval_sec: 5
+
+  filters:
+
+    # Syslog parsers
+    - name: parser
+      match: (syslog|kubernetes.containers.*)
+      key_name: log
+      parser: syslog_rfc5424
+      reserve_data: off
+      preserve_key: off
+
+    - name: parser
+      match: syslog
+      key_name: log
+      parser: syslog_rfc3164
+
+    # Auth logs
+    - name: parser
+      match: app.logs
+      key_name: log
+      parser: auth_basic
+      reserve_data: true
+
+    - name: parser
+      match: app.logs
+      key_name: log
+      parser: web_combined
+      reserve_data: true
+
+    # Retagging
+    - name: rewrite_tag
+      match: app.logs
+      rule: $program ^(sshd|sudo|su|pam_unix|gdm|lightdm) auth.logs false
+
+    - name: rewrite_tag
+      match: app.logs
+      rule: $program ^nginx|apache|httpd web.logs false
+
+    - name: parser
+      match: (syslog|app.logs)
+      key_name: log
+      parser: kernel
+      reserve_data: on
+
+    - name: parser
+      match: app.logs
+      key_name: log
+      parser: python_log
+      reserve_data: on
+
+    - name: parser
+      match: app.logs
+      key_name: log
+      parser: postgresql
+      reserve_data: on
+
+    - name: parser
+      match: app.logs
+      key_name: log
+      parser: mysql
+      reserve_data: on
+
+    - name: parser
+      match: app.logs
+      key_name: log
+      parser: app_generic
+      reserve_data: on
+
+    - name: parser
+      match: (syslog|app.logs)
+      key_name: log
+      parser: json
+      reserve_data: on
+
+    - name: lua
+      match: metrics.cpu
+      script: /fluent-bit/scripts/cpu_avg.lua
+      call: compute_cpu_avg
+
+    - name: lua
+      match: auth.logs
+      script: /fluent-bit/scripts/enrich_sudo.lua
+      call: enrich_sudo
+
+  outputs:
+
+    # SYSLOGS
+    - name: opensearch
+      match: syslog
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-syslog
+      generate_id: on
+      suppress_type_name: on
+      retry_limit: 5
+      workers: 1
+
+    # AUTH LOG INDEX
+    - name: opensearch
+      match: auth.logs
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-auth
+      generate_id: on
+      suppress_type_name: on
+      retry_limit: 5
+      workers: 1
+
+    # WEB LOG INDEX (nginx/apache)
+    - name: opensearch
+      match: web.logs
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-web
+      generate_id: on
+      suppress_type_name: on
+
+    # GENERIC APPLICATION LOGS
+    - name: opensearch
+      match: app.logs
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-app-logs
+      generate_id: on
+      suppress_type_name: on
+      retry_limit: 5
+      workers: 1
+
+    # METRICS
+    - name: opensearch
+      match: metrics.*
+      host: lucenia-node
+      port: 9200
+      http_user: admin
+      http_passwd: MyStrongPassword123_
+      tls: on
+      tls.verify: off
+      index: fluentbit-system-metrics
+      generate_id: on
+      suppress_type_name: on
+      retry_limit: 5
+      workers: 1
