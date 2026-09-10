@@ -12,12 +12,12 @@ You will need to enter a password for the keystore and then enter the informatio
 keytool -list -v -keystore KeyStore.jks
 ```
 
-If you are running the single node default security config lucenia you can get the root-ca pem from `~/.lucenia/lucenia-0.3.0/config/root-ca.pem`
+If you are running the single node default security config lucenia you can get the root-ca pem from `~/.lucenia/lucenia-0.13.0/config/root-ca.pem`
 
 You can add the root-ca.pem to the trust store with the following command
 
 ```bash
-keytool -import -alias lucenia -file ~/.lucenia/lucenia-0.3.0/config/root-ca.pem -keystore KeyStore.jks
+keytool -import -alias lucenia -file ~/.lucenia/lucenia-0.13.0/config/root-ca.pem -keystore KeyStore.jks
 ```
 
 You will need to enter the password for the keystore and then enter `yes` to trust the certificate.

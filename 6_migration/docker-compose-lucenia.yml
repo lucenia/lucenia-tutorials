@@ -1,7 +1,7 @@
 version: '3'
 services:
   search-node1: # This is also the hostname of the container within the Docker network (i.e. https://search-node1/)
-    image: lucenia/lucenia:0.4.0
+    image: lucenia/lucenia:0.13.0
     container_name: search-node1
     environment:
       - cluster.name=search-cluster # Name the cluster
@@ -28,7 +28,7 @@ services:
     networks:
       - search-net # All of the containers will join the same Docker bridge network
   search-node2:
-    image: lucenia/lucenia:0.2.1
+    image: lucenia/lucenia:0.13.0
     container_name: search-node2
     environment:
       - cluster.name=search-cluster
@@ -53,7 +53,7 @@ services:
     networks:
       - search-net
   search-node3:
-    image: lucenia/lucenia:0.2.1
+    image: lucenia/lucenia:0.13.0
     container_name: search-node3
     environment:
       - cluster.name=search-cluster

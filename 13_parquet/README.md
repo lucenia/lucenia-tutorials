@@ -96,7 +96,7 @@ curl -X GET https://localhost:9200/_cluster/health?pretty \
 # The parquet module ships with the image — confirm it's loaded:
 curl -X GET "https://localhost:9200/_cat/plugins?v" \
   -ku admin:$LUCENIA_INITIAL_ADMIN_PASSWORD | grep -i parquet
-# lucenia-node  parquet [module]  0.12.0
+# lucenia-node  parquet [module]  0.13.0
 ```
 
 ## The Data Model
