@@ -73,7 +73,7 @@ Navigate to [Lucenia's website](https://lucenia.io), and click `Try Lucenia`. Fo
 
 We have a new docker compose file with all necessary changes to use Lucenia Search, [docker-compose-lucenia.yml](docker-compose-lucenia.yml). 
 
-Note the changes include modifications for each node including a new image, `lucenia/lucenia:0.2.1`, and environment updates. We ensure we set the license filepath as well as point our data path to the existing data.
+Note the changes include modifications for each node including a new image, `lucenia/lucenia:0.13.0`, and environment updates. We ensure we set the license filepath as well as point our data path to the existing data.
 
 ```yaml
 - plugins.license.certificate_filepath=config/trial.crt
@@ -122,10 +122,10 @@ curl -X GET https://localhost:9200 -ku admin:$LUCENIA_INITIAL_ADMIN_PASSWORD
 curl -X GET https://localhost:9200/_cluster/health?pretty -ku admin:$LUCENIA_INITIAL_ADMIN_PASSWORD
 ```
 
-We are running a Lucenia Search cluster at version `0.2.1` with Lucene `10.0.0`!
+We are running a Lucenia Search cluster at version `0.13.0`!
 However, our cluster health is yellow...let's look into this.
 
-First, confirm the version for each node: `nodes.<node-id>.version` is `0.2.1` in the response.
+First, confirm the version for each node: `nodes.<node-id>.version` is `0.13.0` in the response.
 
 ```bash
 curl -XGET https://localhost:9200/_nodes/_all?pretty -ku admin:$LUCENIA_INITIAL_ADMIN_PASSWORD
@@ -193,4 +193,4 @@ Our indices and cluster health are now green! One last confirmation...let's quer
 curl -X GET https://localhost:9200/movies/_search -ku admin:$LUCENIA_INITIAL_ADMIN_PASSWORD
 ```
 
-We have successfully migrated from OpenSearch 2.18.0 to Lucenia Search 0.2.1. Our data is intact and our cluster is healthy. If you are considering moving to Lucenia from your current search engine, this tutorial provides a comprehensive guide to help you through the process. For additional details on Lucenia Search, check out the [Lucenia documentation](https://docs.lucenia.io/about).
+We have successfully migrated from OpenSearch 2.18.0 to Lucenia Search 0.13.0. Our data is intact and our cluster is healthy. If you are considering moving to Lucenia from your current search engine, this tutorial provides a comprehensive guide to help you through the process. For additional details on Lucenia Search, check out the [Lucenia documentation](https://docs.lucenia.io/about).

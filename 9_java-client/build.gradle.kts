@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
 }
 
-val luceniaJavaVersion = "v0.11.0"
+val luceniaJavaVersion = "0.12.1"
 
 dependencies {
     implementation("io.lucenia.client:lucenia-java:$luceniaJavaVersion")

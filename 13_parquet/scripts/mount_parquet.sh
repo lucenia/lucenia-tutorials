@@ -26,7 +26,7 @@ if ! lucenia_curl -o /dev/null -w '%{http_code}' -X GET "$LUCENIA_URL/_cluster/h
     echo "Cannot reach a healthy node at $LUCENIA_URL - is the cluster up (docker compose up -d) and the port correct?"
     exit 1
 fi
-# On 0.12.0 the module is listed as "parquet [module]" (not "ParquetCodecPlugin").
+# On 0.12.0+ the module is listed as "parquet [module]" (not "ParquetCodecPlugin").
 lucenia_curl -X GET "$LUCENIA_URL/_cat/plugins?v" | grep -i parquet \
     || echo "(parquet module not listed - is this Lucenia 0.12.0+?)"
 echo ""

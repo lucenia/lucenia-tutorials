@@ -31,7 +31,7 @@ lark==0.12.0
 mangum==0.17.0
 multidict==6.0.5
 numpy==2.1.1
-lucenia-py>=0.11.1
+lucenia-py>=0.13.0
 orjson==3.10.7
 overrides==7.7.0
 packaging==24.1
