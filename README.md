@@ -129,6 +129,16 @@ docker compose up
 
 [Index-free search tutorial →](13_parquet/README.md)
 
+### 10. Long-Term Memory for Claude Code
+
+**Purpose**: Give Claude Code memory that survives across sessions, using Lucenia's built-in memory module and MCP server
+
+- Connect Claude Code to Lucenia over MCP with a least-privilege login (no custom server code)
+- Semantic recall with a small embedding sidecar, plus hooks that load notes at session start
+- Inspect, prune, back up, restore, and audit what Claude remembers
+
+[Claude Code memory tutorial →](15_claude-memory/README.md)
+
 ## Example Applications
 
 Complete example applications demonstrating real-world implementations:

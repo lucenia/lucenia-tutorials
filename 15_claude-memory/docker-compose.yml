@@ -1,0 +1,104 @@
+name: lucenia-claude-memory
+services:
+  # One-shot helper: the snapshot volume is created owned by root, but the
+  # Lucenia process runs as uid 1000. Create the repository's parent folder and
+  # hand the whole volume over before the node starts, so backups (Part 6) can
+  # write to it. The folder is called "repo" because Lucenia 1.0.0's sandbox accepted
+  # only a location below a folder named repo (see MANAGING.md, "If you run Lucenia 1.0.0").
+  snap-init:
+    image: lucenia/lucenia:0.13.0
+    user: "0"
+    entrypoint: ["sh", "-c", "mkdir -p /mnt/snapshots/repo && chown -R 1000:1000 /mnt/snapshots"]
+    volumes:
+      - lucenia-snapshots:/mnt/snapshots
+    networks:
+      - lucenia-net
+
+  # Embedding sidecar. Lucenia's memory module needs an embedding provider, and
+  # the provider that gives real semantic recall without cloud credentials is
+  # "http" (an OpenAI-style /v1/embeddings endpoint). This service is that
+  # endpoint, running all-MiniLM-L6-v2 on the CPU. Internal only: no host port.
+  embedder:
+    build: ./embedder
+    container_name: lucenia-embedder
+    # Only this service comes back by itself when Docker restarts; the node has no restart policy (like the other tutorials),
+    # so start it again with docker compose up -d. Run docker compose down when you are finished with the tutorial.
+    restart: unless-stopped
+    # Least privilege: it only reads its model files and answers HTTP, so it needs no capabilities, no writable
+    # root filesystem, and no room to grow without bound (it uses about 175 MB and 21 threads in normal use).
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    pids_limit: 128
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    networks:
+      - lucenia-net
+
+  lucenia-node:
+    image: lucenia/lucenia:0.13.0
+    container_name: lucenia-node
+    environment:
+      - cluster.name=lucenia-cluster
+      - node.name=lucenia-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "LUCENIA_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - network.host=0.0.0.0
+      - plugins.license.certificate_filepath=config/trial.crt
+      - LUCENIA_INITIAL_ADMIN_PASSWORD=MyStrongPassword123!
+      # --- Agent memory (the settings this tutorial adds) ---
+      # The built-in MCP server is OFF by default (HTTP 500 "The MCP server is not enabled").
+      - plugins.ml_commons.mcp_server_enabled=true
+      # Memory is also OFF by default: with no embedding provider every remember/recall
+      # fails with "embedding dimension must be positive, was 0". Point it at the sidecar.
+      # Choose the embedder BEFORE the first memory is stored; switching later mixes vector spaces.
+      - plugins.memory.embedding.provider=http
+      - plugins.memory.embedding.endpoint=http://embedder:8080/v1/embeddings
+      - plugins.memory.embedding.model=all-MiniLM-L6-v2
+      # 384 = the output size of all-MiniLM-L6-v2. It is baked into the index mapping on first use.
+      - plugins.memory.embedding.dimension=384
+      # Snapshot repository location for backing up memory (Part 6); matches the volume below.
+      # scripts/manage_memory.sh registers the repository at /mnt/snapshots/repo/claude-memory.
+      - path.repo=/mnt/snapshots
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the Lucenia user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - lucenia-data:/usr/share/lucenia/data
+      - lucenia-snapshots:/mnt/snapshots
+      - ./node/config/trial.crt:/usr/share/lucenia/config/trial.crt
+    # Loopback only. The demo passwords are printed in this tutorial and the demo admin client certificate ships
+    # with Lucenia's demo configuration, so both are public by design: this node must never listen on the LAN.
+    # Everything in this tutorial uses localhost; the embedder is reached with `docker exec`.
+    # Do not change this to 9200:9200 (that publishes the port on every network interface).
+    ports:
+      - "127.0.0.1:9200:9200"
+    depends_on:
+      # Start Lucenia only after the embedder answers, so the first remember cannot race it.
+      embedder:
+        condition: service_healthy
+      snap-init:
+        condition: service_completed_successfully
+    networks:
+      - lucenia-net
+
+volumes:
+  lucenia-data:
+  lucenia-snapshots:
+
+networks:
+  lucenia-net:
